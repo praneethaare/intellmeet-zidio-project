@@ -28,9 +28,18 @@ const allowedOrigins = new Set([
   'http://127.0.0.1:5173',
 ])
 
+const isAllowedPreviewOrigin = (origin) => {
+  try {
+    const { hostname } = new URL(origin)
+    return hostname.endsWith('.vercel.app') || hostname.endsWith('.netlify.app')
+  } catch {
+    return false
+  }
+}
+
 app.use(cors({
   origin(origin, callback) {
-    if (!origin || allowedOrigins.has(origin)) {
+    if (!origin || allowedOrigins.has(origin) || isAllowedPreviewOrigin(origin)) {
       return callback(null, true)
     }
 
